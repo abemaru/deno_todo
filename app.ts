@@ -1,8 +1,18 @@
-import { Application } from "./deps.ts";
+import { Router, Application } from "./deps.ts";
 import todos from "./routes/todo.ts";
 
 const app = new Application();
+const router = new Router();
 
-app.use(todos.routes());
+app.use(async( ctx, next) => {
+    await next();
+    console.log(`${ctx.request.method}: ${ctx.request.url.pathname}`);
+});
 
-await app.listen({ port: 8080 });
+router.get("/", (ctx) => {
+    ctx.response.body = "Hello World!";
+});
+
+app.use(router.routes()).use(todos.routes());
+
+await app.listen({ port: 8088 });
